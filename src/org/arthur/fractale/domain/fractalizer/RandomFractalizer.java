@@ -1,5 +1,6 @@
 package org.arthur.fractale.domain.fractalizer;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import org.arthur.fractale.domain.complex.ComplexNumber;
@@ -21,6 +22,12 @@ public class RandomFractalizer extends Fractalizer {
 		rnd.nextBytes(res);
 
 		return res[0];
+	}
+
+	@Override
+	public void applyProp(HashMap<String, String> propMap) {
+		// osef
+
 	}
 
 }

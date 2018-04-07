@@ -8,11 +8,20 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 
+/**
+ * La zone de dessin de l'application; il s'agit un carré
+ * 
+ * @author Arthur
+ *
+ */
 public class ZoneDessinPane extends BorderPane implements Dessinable {
 
 	private GraphicsContext _gc;
 	private Canvas _canvas;
 
+	/**
+	 * constructeur par défaut
+	 */
 	public ZoneDessinPane() {
 
 		_canvas = new Canvas();
@@ -48,14 +57,23 @@ public class ZoneDessinPane extends BorderPane implements Dessinable {
 		return _canvas;
 	}
 
-	public void drawRectAt(int xC,int yC,int amp) {
-		
+	/**
+	 * Dessine un carré rouge
+	 * 
+	 * @param xC
+	 *            position x du centre du carré
+	 * @param yC
+	 *            position y du centre du carré
+	 * @param amp
+	 *            longueur des côtés
+	 */
+	public void drawRectAt(int xC, int yC, int amp) {
+
 		_gc.setStroke(Color.RED);
 
-        _gc.strokePolygon(new double[]{xC-amp/2.0, xC+amp/2.0, xC+amp/2.0, xC-amp/2.0},
-                new double[]{yC-amp/2.0, yC-amp/2.0, yC+amp/2.0, yC+amp/2.0}, 4);
-		
-		
+		_gc.strokePolygon(new double[] { xC - amp / 2.0, xC + amp / 2.0, xC + amp / 2.0, xC - amp / 2.0 },
+				new double[] { yC - amp / 2.0, yC - amp / 2.0, yC + amp / 2.0, yC + amp / 2.0 }, 4);
+
 	}
 
 }

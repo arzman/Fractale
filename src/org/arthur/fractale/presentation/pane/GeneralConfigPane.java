@@ -3,20 +3,29 @@ package org.arthur.fractale.presentation.pane;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
+import java.util.HashMap;
 
 import org.arthur.fractale.application.manager.FractalizerManager;
 import org.arthur.fractale.application.manager.ZoneDessinManager;
 import org.arthur.fractale.domain.complex.ComplexNumber;
 
+import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Border;
 import javafx.scene.layout.BorderStroke;
 import javafx.scene.layout.BorderStrokeStyle;
@@ -43,11 +52,13 @@ public class GeneralConfigPane extends GridPane {
 	/* Formatter des flottant */
 	private NumberFormat numFormatter;
 
+	/* Les propriété des fractalizer */
+	private ObservableList<EditableProperties> _propertiesList;
+	private TableView<EditableProperties> _table;
+
 	public GeneralConfigPane() {
 
 		numFormatter = new DecimalFormat("0.######E0");
-		
-
 
 		setBorder(new Border(
 				new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(2.0), new BorderWidths(1.0))));
@@ -86,10 +97,36 @@ public class GeneralConfigPane extends GridPane {
 		_fractalizerCmb = new ComboBox<String>();
 		_fractalizerCmb.setItems(FractalizerManager.getInstance().getAvailableFractalizer());
 
-		add(_fractalizerCmb, 0, 3, 1, 2);
+		add(_fractalizerCmb, 0, 3, 2, 1);
+
+		_propertiesList = FXCollections.observableArrayList();
+		_table = new TableView<EditableProperties>();
+
+		_table.setItems(_propertiesList);
+		_table.setEditable(true);
+
+		TableColumn<EditableProperties, String> keyCol = new TableColumn<EditableProperties, String>("Clé");
+		keyCol.setCellValueFactory(cellData -> cellData.getValue().keyProperty());
+		_table.getColumns().add(keyCol);
+
+		TableColumn<EditableProperties, String> valueCol = new TableColumn<EditableProperties, String>("Valeur");
+		valueCol.setCellValueFactory(cellData -> cellData.getValue().valueProperty());
+
+		valueCol.setCellFactory(TextFieldTableCell.forTableColumn());
+		valueCol.setOnEditCommit(new EventHandler<CellEditEvent<EditableProperties, String>>() {
+			@Override
+			public void handle(CellEditEvent<EditableProperties, String> t) {
+				((EditableProperties) t.getTableView().getItems().get(t.getTablePosition().getRow()))
+						.setValue(t.getNewValue());
+			}
+		});
+
+		_table.getColumns().add(valueCol);
+
+		add(_table, 0, 4, 2, 1);
 
 		_applyBtn = new Button("Calculer");
-		add(_applyBtn, 0, 5, 1, 2);
+		add(_applyBtn, 0, 5, 2, 1);
 
 		// init des champs
 		getFromManager();
@@ -122,6 +159,7 @@ public class GeneralConfigPane extends GridPane {
 			public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
 
 				FractalizerManager.getInstance().setFractalizer(newValue);
+				refreshTable();
 
 			}
 		});
@@ -137,7 +175,14 @@ public class GeneralConfigPane extends GridPane {
 
 					ZoneDessinManager.getInstance().setBorderLength(Integer.parseInt(_resolutionTxt.getText()));
 
-					FractalizerManager.getInstance().launchFractalizer();
+					HashMap<String, String> map = new HashMap<>();
+					for (EditableProperties ep : _propertiesList) {
+
+						map.put(ep.keyProperty().get(), ep.valueProperty().get());
+
+					}
+
+					FractalizerManager.getInstance().launchFractalizer(map);
 				} catch (ParseException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
@@ -146,6 +191,24 @@ public class GeneralConfigPane extends GridPane {
 			}
 
 		});
+
+	}
+
+	/**
+	 * Met à jour la talbe des propriétés du fractalizer
+	 */
+	private void refreshTable() {
+
+		_propertiesList.clear();
+		HashMap<String, String> map = FractalizerManager.getInstance().getCurrentFractalizerPropMap();
+
+		for (String key : map.keySet()) {
+
+			EditableProperties ep = new EditableProperties(key, map.get(key));
+
+			_propertiesList.add(ep);
+
+		}
 
 	}
 
@@ -199,6 +262,40 @@ public class GeneralConfigPane extends GridPane {
 		// config de la partie calcul
 		_amptxt.setText(numFormatter.format(newAmplitude));
 		_centerTxt.setText(formatComplexNumber(newCenter));
+
+	}
+
+	private class EditableProperties {
+
+		private StringProperty keyProperty;
+		private StringProperty valueProperty;
+
+		public EditableProperties() {
+
+			keyProperty = new SimpleStringProperty();
+			valueProperty = new SimpleStringProperty();
+		}
+
+		public void setValue(String newValue) {
+			valueProperty.set(newValue);
+
+		}
+
+		public StringProperty valueProperty() {
+			return valueProperty;
+		}
+
+		public EditableProperties(String key, String value) {
+
+			this();
+			keyProperty.set(key);
+			valueProperty.set(value);
+
+		}
+
+		public StringProperty keyProperty() {
+			return keyProperty;
+		}
 
 	}
 

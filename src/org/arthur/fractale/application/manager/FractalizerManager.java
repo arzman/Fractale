@@ -45,9 +45,9 @@ public class FractalizerManager {
 
 		_fractalizerMap = new HashMap<>();
 
-		_fractalizerMap.put("Random", new RandomFractalizer());
-		_fractalizerMap.put("Module", new ModuleFractalizer());
-		_fractalizerMap.put("Julia", new JuliaFractalizer());
+		_fractalizerMap.put("Random (test)", new RandomFractalizer());
+		_fractalizerMap.put("Module (test)", new ModuleFractalizer());
+		_fractalizerMap.put("Julia (z²+c)", new JuliaFractalizer());
 
 		_fractalizerNameList = FXCollections.observableArrayList();
 
@@ -72,22 +72,48 @@ public class FractalizerManager {
 
 	}
 
-	public void launchFractalizer() {
+	/**
+	 * Lance le calcul
+	 * 
+	 * @param propMap
+	 *            les propriété du fractalizer
+	 */
+	public void launchFractalizer(HashMap<String, String> propMap) {
 
 		if (_fractalizer != null) {
 
-			System.out.println("Calcul envoyé");
-
+			// on envoie la saisie utilisateur
+			_fractalizer.applyProp(propMap);
+			// calcul de l'image
 			byte[][] res = _fractalizer.generate(_center, _amplitude,
 					ZoneDessinManager.getInstance().getBorderLength());
-
-			System.out.println("Rendering en cours");
-
+			// affichage
 			ZoneDessinManager.getInstance().render(res);
 
-			System.out.println("fin");
 		}
 
+	}
+
+	/**
+	 * Récupèrer la map des propriétés du fractalizer
+	 * 
+	 * @return
+	 */
+	public HashMap<String, String> getCurrentFractalizerPropMap() {
+
+		HashMap<String, String> map = new HashMap<>();
+
+		if (_fractalizer != null) {
+
+			for (String key : _fractalizer.getProperties().keySet()) {
+
+				map.put(key, _fractalizer.getProperties().get(key));
+
+			}
+
+		}
+
+		return map;
 	}
 
 	/**
