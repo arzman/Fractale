@@ -1,6 +1,7 @@
 package org.arthur.fractale.presentation.scene;
 
 import org.arthur.fractale.application.manager.ZoneDessinManager;
+import org.arthur.fractale.presentation.listener.ZoneDessinMouseListener;
 import org.arthur.fractale.presentation.pane.GeneralConfigPane;
 import org.arthur.fractale.presentation.pane.ZoneDessinPane;
 
@@ -14,12 +15,14 @@ public class MainScene extends Scene {
 		super(new BorderPane());
 
 		GeneralConfigPane configPane = new GeneralConfigPane();
-		ZoneDessinPane dessinZone = new ZoneDessinPane();
+		ZoneDessinPane zoneDessin = new ZoneDessinPane();
 
-		ZoneDessinManager.getInstance().bindZoneDessin(dessinZone);
+		ZoneDessinManager.getInstance().bindZoneDessin(zoneDessin);
 
 		((BorderPane) getRoot()).setRight(configPane);
-		((BorderPane) getRoot()).setCenter(dessinZone);
+		((BorderPane) getRoot()).setCenter(zoneDessin);
+
+		ZoneDessinMouseListener zdml = new ZoneDessinMouseListener(zoneDessin, configPane);
 
 	}
 

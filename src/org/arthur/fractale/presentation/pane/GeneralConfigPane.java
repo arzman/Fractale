@@ -1,5 +1,9 @@
 package org.arthur.fractale.presentation.pane;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+
 import org.arthur.fractale.application.manager.FractalizerManager;
 import org.arthur.fractale.application.manager.ZoneDessinManager;
 import org.arthur.fractale.domain.complex.ComplexNumber;
@@ -36,7 +40,14 @@ public class GeneralConfigPane extends GridPane {
 	private ComboBox<String> _fractalizerCmb;
 	private Button _applyBtn;
 
+	/* Formatter des flottant */
+	private NumberFormat numFormatter;
+
 	public GeneralConfigPane() {
+
+		numFormatter = new DecimalFormat("0.######E0");
+		
+
 
 		setBorder(new Border(
 				new BorderStroke(Color.BLACK, BorderStrokeStyle.SOLID, new CornerRadii(2.0), new BorderWidths(1.0))));
@@ -92,13 +103,13 @@ public class GeneralConfigPane extends GridPane {
 	 * Met à jour l'IHM avec les valeurs de configuration contenue dans
 	 * l'application
 	 */
-	private void getFromManager() {
+	public void getFromManager() {
 
 		// config de la zone de dessin
 		_resolutionTxt.setText(String.valueOf(ZoneDessinManager.getInstance().getBorderLength()));
 
 		// config de la partie calcul
-		_amptxt.setText(String.valueOf(FractalizerManager.getInstance().getAmplitude()));
+		_amptxt.setText(numFormatter.format(FractalizerManager.getInstance().getAmplitude()));
 		_centerTxt.setText(formatComplexNumber(FractalizerManager.getInstance().getCentre()));
 
 	}
@@ -120,12 +131,17 @@ public class GeneralConfigPane extends GridPane {
 			@Override
 			public void handle(ActionEvent event) {
 
-				FractalizerManager.getInstance().setAmplitude(Double.parseDouble(_amptxt.getText()));
-				FractalizerManager.getInstance().setCentre(parseComplexeNumber(_centerTxt.getText()));
+				try {
+					FractalizerManager.getInstance().setAmplitude(numFormatter.parse(_amptxt.getText()).doubleValue());
+					FractalizerManager.getInstance().setCentre(parseComplexeNumber(_centerTxt.getText()));
 
-				ZoneDessinManager.getInstance().setBorderLength(Integer.parseInt(_resolutionTxt.getText()));
+					ZoneDessinManager.getInstance().setBorderLength(Integer.parseInt(_resolutionTxt.getText()));
 
-				FractalizerManager.getInstance().launchFractalizer();
+					FractalizerManager.getInstance().launchFractalizer();
+				} catch (ParseException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 			}
 
@@ -141,31 +157,49 @@ public class GeneralConfigPane extends GridPane {
 	 */
 	private String formatComplexNumber(ComplexNumber complex) {
 
-		return String.valueOf(complex.getRe()) + " + " + String.valueOf(complex.getIm()) + "i ";
+		return numFormatter.format(complex.getRe()) + " + " + numFormatter.format(complex.getIm()) + "i ";
 	}
-	
-	private ComplexNumber parseComplexeNumber(String text) {
-		
-		
+
+	private ComplexNumber parseComplexeNumber(String text) throws ParseException {
+
 		String[] splited = text.split("\\+");
-		
+
 		double real;
 		double imag;
-		
-		if(splited[0].contains("i")) {
-			
-			real = Double.parseDouble(splited[1].trim());
-			imag = Double.parseDouble(splited[0].replaceAll("i", "").trim());
-			
-		}else {
-			real = Double.parseDouble(splited[0].trim());
-			imag = Double.parseDouble(splited[1].replaceAll("i", "").trim());
+
+		if (splited[0].contains("i")) {
+
+			real = numFormatter.parse(splited[1].trim()).doubleValue();
+			imag = numFormatter.parse(splited[0].replaceAll("i", "").trim()).doubleValue();
+
+		} else {
+			real = numFormatter.parse(splited[0].trim()).doubleValue();
+			imag = numFormatter.parse(splited[1].replaceAll("i", "").trim()).doubleValue();
 		}
-		
-		
+
 		ComplexNumber res = new ComplexNumber(real, imag);
-		
+
 		return res;
+	}
+
+	public void adjustCadre(int xC, int yC, int amp) {
+
+		double pas = FractalizerManager.getInstance().getAmplitude()
+				/ ZoneDessinManager.getInstance().getBorderLength();
+
+		// calcul de l'affixe du centre
+		ComplexNumber newCenter = new ComplexNumber(
+				FractalizerManager.getInstance().getCentre().getRe()
+						- FractalizerManager.getInstance().getAmplitude() / 2 + xC * pas,
+				FractalizerManager.getInstance().getCentre().getIm()
+						+ FractalizerManager.getInstance().getAmplitude() / 2 - yC * pas);
+
+		double newAmplitude = amp * pas;
+
+		// config de la partie calcul
+		_amptxt.setText(numFormatter.format(newAmplitude));
+		_centerTxt.setText(formatComplexNumber(newCenter));
+
 	}
 
 }

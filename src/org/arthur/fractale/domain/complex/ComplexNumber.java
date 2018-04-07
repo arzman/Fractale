@@ -54,4 +54,15 @@ public class ComplexNumber {
 		return (_real == a._real) && (_imag == a._imag);
 	}
 
+	public void setRe(double real) {
+		_real = real;
+
+	}
+
+	public void setIm(double img) {
+
+		_imag = img;
+
+	}
+
 }

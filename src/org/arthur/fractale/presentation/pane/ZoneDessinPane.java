@@ -15,13 +15,10 @@ public class ZoneDessinPane extends BorderPane implements Dessinable {
 
 	public ZoneDessinPane() {
 
-		int borderLength = ZoneDessinManager.getInstance().getBorderLength();
-
-		_canvas = new Canvas(borderLength, borderLength);
+		_canvas = new Canvas();
 		_gc = _canvas.getGraphicsContext2D();
 
 		setCenter(_canvas);
-
 		resetZone();
 
 	}
@@ -37,9 +34,28 @@ public class ZoneDessinPane extends BorderPane implements Dessinable {
 	@Override
 	public void resetZone() {
 
+		int borderLength = ZoneDessinManager.getInstance().getBorderLength();
+
+		_canvas.setHeight(borderLength);
+		_canvas.setWidth(borderLength);
+
 		_gc.setFill(Color.WHITE);
 		_gc.fillRect(0, 0, _canvas.getWidth(), _canvas.getHeight());
 
+	}
+
+	public Canvas getCanva() {
+		return _canvas;
+	}
+
+	public void drawRectAt(int xC,int yC,int amp) {
+		
+		_gc.setStroke(Color.RED);
+
+        _gc.strokePolygon(new double[]{xC-amp/2.0, xC+amp/2.0, xC+amp/2.0, xC-amp/2.0},
+                new double[]{yC-amp/2.0, yC-amp/2.0, yC+amp/2.0, yC+amp/2.0}, 4);
+		
+		
 	}
 
 }

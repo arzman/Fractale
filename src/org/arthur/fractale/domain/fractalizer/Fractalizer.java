@@ -14,7 +14,7 @@ public abstract class Fractalizer {
 			for (int j = 0; j < borderLength; j++) {
 
 				ComplexNumber aff = new ComplexNumber(center.getRe() - amplitude / 2 + i * pas,
-						center.getIm() - amplitude / 2 + j * pas);
+						center.getIm() + amplitude / 2 - j * pas);
 				res[i][j] = computeAt(aff);
 
 			}

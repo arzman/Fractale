@@ -35,7 +35,10 @@ public class ZoneDessinManager {
 		_palette = new Color[256];
 
 		for (int i = 0; i < _palette.length; i++) {
-			_palette[i] = new Color(i / 255.0, 0.1, 0.7, 1.0);
+
+			double var = i / 255.0;
+
+			_palette[i] = new Color(var, var, var, 1.0);
 		}
 
 	}
@@ -85,6 +88,10 @@ public class ZoneDessinManager {
 
 		_borderLength = length;
 
+		_zoneDessin.resetZone();
+
 	}
+
+
 
 }
