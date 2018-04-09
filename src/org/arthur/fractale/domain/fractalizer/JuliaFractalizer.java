@@ -20,13 +20,9 @@ public class JuliaFractalizer extends Fractalizer {
 	public JuliaFractalizer() {
 
 		super();
-		// -0.0958 + 0.735i
-		_c = new ComplexNumber(-0.0958, 0.735);
 
-		_properties.put(RE_C, "-0.0958");
-		_properties.put(IM_C, "0.735");
-
-		_nIter = 200;
+		_properties.put(RE_C, "0.4");
+		_properties.put(IM_C, "0.2");
 		_properties.put(ITER, "200");
 
 	}

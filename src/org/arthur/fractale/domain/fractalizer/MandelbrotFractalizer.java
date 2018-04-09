@@ -20,13 +20,9 @@ public class MandelbrotFractalizer extends Fractalizer {
 	public MandelbrotFractalizer() {
 
 		super();
-		// -0.0958 + 0.735i
-		_z0 = new ComplexNumber(-0.0958, 0.735);
 
-		_properties.put(RE_Z0, "-0.0958");
-		_properties.put(IM_Z0, "0.735");
-
-		_nIter = 200;
+		_properties.put(RE_Z0, "0.0");
+		_properties.put(IM_Z0, "0.0");
 		_properties.put(ITER, "200");
 
 	}
