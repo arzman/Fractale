@@ -21,8 +21,8 @@ public class JuliaFractalizer extends Fractalizer {
 
 		super();
 
-		_properties.put(RE_C, "0.4");
-		_properties.put(IM_C, "0.2");
+		_properties.put(RE_C, "-0.772");
+		_properties.put(IM_C, "0.124");
 		_properties.put(ITER, "200");
 
 	}
