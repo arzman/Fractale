@@ -5,6 +5,7 @@ import java.util.HashMap;
 import org.arthur.fractale.domain.complex.ComplexNumber;
 import org.arthur.fractale.domain.fractalizer.Fractalizer;
 import org.arthur.fractale.domain.fractalizer.JuliaFractalizer;
+import org.arthur.fractale.domain.fractalizer.MandelbrotFractalizer;
 import org.arthur.fractale.domain.fractalizer.ModuleFractalizer;
 import org.arthur.fractale.domain.fractalizer.RandomFractalizer;
 
@@ -48,6 +49,7 @@ public class FractalizerManager {
 		_fractalizerMap.put("Random (test)", new RandomFractalizer());
 		_fractalizerMap.put("Module (test)", new ModuleFractalizer());
 		_fractalizerMap.put("Julia (z²+c)", new JuliaFractalizer());
+		_fractalizerMap.put("Mandelbrot (z²+c)", new MandelbrotFractalizer());
 
 		_fractalizerNameList = FXCollections.observableArrayList();
 
